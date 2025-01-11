@@ -9,7 +9,7 @@ exports.getLogin = (req, res, next) => {
     res.render('auth/login', {
         path: '/login',
         pageTitle: 'Login',
-        isLoggedIn: req.session.isLoggedIn
+        errorMessage: req.flash('error')
     });
 };
 
@@ -28,6 +28,7 @@ exports.getSignup = (req, res, next) => {
     User.findOne({ email: email })
         .then(user => {
             if (!user) {
+                req.flash('error', 'Invalid credentials');
                 return res.redirect('/login');
             }
 
@@ -47,6 +48,7 @@ exports.getSignup = (req, res, next) => {
                         });
                     }
                     // If passwords don't match, redirect to login
+                    req.flash('error', 'Invalid credentials');
                     return res.redirect('/login');
                 })
                 .catch(err => {
